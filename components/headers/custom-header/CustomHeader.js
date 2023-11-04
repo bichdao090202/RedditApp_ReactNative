@@ -2,9 +2,7 @@ import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-import { MaterialCommunityIcons } from "@expo/vector-icons";
-
-export default function ChatScreenHeader(props) {
+export default function CustomHeader(props) {
   const navigation = useNavigation();
 
   return (
@@ -19,14 +17,10 @@ export default function ChatScreenHeader(props) {
       </View>
 
       <View style={styles.view2}>
-        <MaterialCommunityIcons
-          name="chat-plus-outline"
-          size={24}
-          color="black"
-        />
+        <Ionicons name="search" size={24} color="black" />
         <TouchableOpacity onPress={() => navigation.navigate("ProfileScrenn")}>
           <Image
-            source={require("../../assets/favicon.png")}
+            source={require("../../../assets/favicon.png")}
             style={styles.avatarUser}
           />
         </TouchableOpacity>
