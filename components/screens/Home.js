@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Text,
   View,
@@ -11,7 +11,8 @@ import { Foundation } from "@expo/vector-icons";
 import { Ionicons } from "@expo/vector-icons";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 
-export default function Home({ navigation }) {
+export default function Home({ navigation, route }) {
+  const [user, setUser] = useState({});
   const [post, setPost] = useState([
     {
       community: {
@@ -24,73 +25,14 @@ export default function Home({ navigation }) {
       vote: 5,
       comments: 10,
     },
-    {
-      community: {
-        name: "Minecraft",
-        // img: require('../assets/favicon.png'),
-      },
-      title: "Title",
-      bodyText:
-        "Open a PR, have someone else like @brentvatne look at it. If it's good to go, publish the final version, update the website version again, then merge. The website will be deployed when you merge to master",
-      vote: 5,
-      comments: 10,
-    },
-    {
-      community: {
-        name: "Minecraft",
-        // img: require('../assets/favicon.png'),
-      },
-      title: "Title",
-      bodyText:
-        "Open a PR, have someone else like @brentvatne look at it. If it's good to go, publish the final version, update the website version again, then merge. The website will be deployed when you merge to master",
-      vote: 5,
-      comments: 10,
-    },
-    {
-      community: {
-        name: "Minecraft",
-        // img: require('../assets/favicon.png'),
-      },
-      title: "Title",
-      bodyText:
-        "Open a PR, have someone else like @brentvatne look at it. If it's good to go, publish the final version, update the website version again, then merge. The website will be deployed when you merge to master",
-      vote: 5,
-      comments: 10,
-    },
-    {
-      community: {
-        name: "Minecraft",
-        // img: require('../assets/favicon.png'),
-      },
-      title: "Title",
-      bodyText:
-        "Open a PR, have someone else like @brentvatne look at it. If it's good to go, publish the final version, update the website version again, then merge. The website will be deployed when you merge to master",
-      vote: 5,
-      comments: 10,
-    },
-    {
-      community: {
-        name: "Minecraft",
-        // img: require('../assets/favicon.png'),
-      },
-      title: "Title",
-      bodyText:
-        "Open a PR, have someone else like @brentvatne look at it. If it's good to go, publish the final version, update the website version again, then merge. The website will be deployed when you merge to master",
-      vote: 5,
-      comments: 10,
-    },
-    {
-      community: {
-        name: "Minecraft",
-        // img: require('../assets/favicon.png'),
-      },
-      title: "Title",
-      bodyText:
-        "Open a PR, have someone else like @brentvatne look at it. If it's good to go, publish the final version, update the website version again, then merge. The website will be deployed when you merge to master",
-      vote: 5,
-      comments: 10,
-    },
   ]);
+
+  useEffect(() => {
+    if (route.params?.user) {
+      console.log(route.params?.user);
+      setUser(route.params?.user);
+    }
+  }, [route.params?.user]);
 
   const BreakSpace = () => {
     return (
