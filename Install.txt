@@ -3,3 +3,9 @@ npm install @react-navigation/native @react-navigation/native-stack
 npm install react-native-screens react-native-safe-area-context
 npm install react-native-ionicons@^4.x
 npm install @react-navigation/bottom-tabs
+
+npx expo install expo-image-picker
+npm install react-native-progress --save
+npx expo install firebase
+npx expo install expo-av
+npm install axios

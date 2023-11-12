@@ -1,14 +1,24 @@
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import { useState, useEffect } from "react";
 
 export default function CustomHeader(props) {
   const navigation = useNavigation();
+  const [user, setUser] = useState(props.user);
 
   return (
     <View style={styles.containner}>
       <View style={styles.view1}>
-        <TouchableOpacity onPress={() => navigation.navigate("MenuScreen")}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("MenuStackScreen", {
+              screen: "MenuScreen",
+              params: { user: user },
+            });
+            // console.log(user);
+          }}
+        >
           <Ionicons name="menu" size={30} color="black" />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 10 }}>
@@ -19,10 +29,7 @@ export default function CustomHeader(props) {
       <View style={styles.view2}>
         <Ionicons name="search" size={24} color="black" />
         <TouchableOpacity onPress={() => navigation.navigate("ProfileScrenn")}>
-          <Image
-            source={require("../../../assets/favicon.png")}
-            style={styles.avatarUser}
-          />
+          <Image source={{ uri: user.avatarUrl }} style={styles.avatarUser} />
         </TouchableOpacity>
       </View>
     </View>
