@@ -12,11 +12,13 @@ import ChatScreen from "./components/screens/ChatScreen";
 import InboxScreen from "./components/screens/InboxScreen";
 import PostComment from "./components/PostComment";
 import CustomHeader from "./components/headers/custom-header/CustomHeader";
+import CreateCommunityScreen from "./components/screens/create-community-screen/CreateCommunityScreen";
 
 import ChatScreenHeader from "./components/headers/ChatScreenHeader";
 import InboxScreenHeader from "./components/headers/InboxScreenHeader";
 import CreateScreen from "./components/screens/create-screen/CreateScreen";
-import CreateScreenHeader from "./components/headers/create-screen-header/CreateScreenHeader";
+import ChooseCommunityScreen from "./components/screens/choose-community-screen/ChooseCommunityScreen";
+import UserCommunityScreen from "./components/screens/user-community-screen/UserCommunityScreen";
 import { useState, useRef, useEffect } from "react";
 import { Text, TouchableOpacity } from "react-native";
 import LoginScreen from "./components/screens/login-screen/LoginScreen";
@@ -29,6 +31,7 @@ const Tab = createBottomTabNavigator();
 const HomeStack = createNativeStackNavigator();
 const CommunityStack = createNativeStackNavigator();
 const CreatePostStack = createNativeStackNavigator();
+const MenuStack = createNativeStackNavigator();
 
 const HoneStackScreen = () => {
   const route = useRoute();
@@ -46,14 +49,35 @@ const HoneStackScreen = () => {
       <HomeStack.Screen
         name="HomeStack"
         component={Home}
-        options={{
-          header: () => <CustomHeader title="Home" user={user} />,
-        }}
+        options={{ header: () => null }}
       />
       <HomeStack.Screen name="ProfileScrenn" component={ProfileScreen} />
       <HomeStack.Screen name="PostComment" component={PostComment} />
-      <HomeStack.Screen name="MenuScreen" component={MenuScreen} />
+      <HomeStack.Screen
+        name="MenuStackScreen"
+        component={MenuStackScreen}
+        options={{ header: () => null }}
+      />
     </HomeStack.Navigator>
+  );
+};
+
+const MenuStackScreen = () => {
+  const route = useRoute();
+  const [user, setUser] = useState(route.params?.user);
+
+  return (
+    <MenuStack.Navigator screenOptions={{ header: () => null }}>
+      <MenuStack.Screen
+        name="UserCommunityScreen"
+        component={UserCommunityScreen}
+      />
+      <MenuStack.Screen name="MenuScreen" component={MenuScreen} />
+      <MenuStack.Screen
+        name="CreateCommunityScreen"
+        component={CreateCommunityScreen}
+      />
+    </MenuStack.Navigator>
   );
 };
 
@@ -66,18 +90,22 @@ const CommunityStackScreen = () => {
       // console.log(route.params?.user);
       setUser(route.params?.user);
     }
-  }, [route.params?.user]);
+  }, []);
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen
-        name="CommunityStack"
+        name="CommunityScreen"
         component={CommunityScreen}
         options={{
-          header: () => <CustomHeader title="Communities" user={user} />,
+          header: () => null,
         }}
       />
-      <HomeStack.Screen name="ProfileScrenn" component={ProfileScreen} />
-      <HomeStack.Screen name="MenuScreen" component={MenuScreen} />
+      <HomeStack.Screen name="ProfileScreen" component={ProfileScreen} />
+      <HomeStack.Screen
+        name="MenuStackScreen"
+        component={MenuStackScreen}
+        options={{ header: () => null }}
+      />
     </HomeStack.Navigator>
   );
 };
@@ -91,7 +119,11 @@ function ChatScreenStack() {
         options={{ header: () => <ChatScreenHeader title="Chats" /> }}
       />
       <HomeStack.Screen name="ProfileScrenn" component={ProfileScreen} />
-      <HomeStack.Screen name="MenuScreen" component={MenuScreen} />
+      <HomeStack.Screen
+        name="MenuStackScreen"
+        component={MenuStackScreen}
+        options={{ header: () => null }}
+      />
     </HomeStack.Navigator>
   );
 }
@@ -105,18 +137,26 @@ function InboxScreenStack() {
         options={{ header: () => <InboxScreenHeader title="Inbox" /> }}
       />
       <HomeStack.Screen name="ProfileScrenn" component={ProfileScreen} />
-      <HomeStack.Screen name="MenuScreen" component={MenuScreen} />
+      <HomeStack.Screen
+        name="MenuStackScreen"
+        component={MenuStackScreen}
+        options={{ header: () => null }}
+      />
     </HomeStack.Navigator>
   );
 }
 
 function CreateScreenStack() {
   return (
-    <CreatePostStack.Navigator>
+    <CreatePostStack.Navigator
+      screenOptions={{
+        header: () => null,
+      }}
+    >
+      <CreatePostStack.Screen name="CreateScreen" component={CreateScreen} />
       <CreatePostStack.Screen
-        name="CreateScreenStack"
-        component={CreateScreen}
-        options={{ header: () => <CreateScreenHeader /> }}
+        name="ChooseCommunityScreen"
+        component={ChooseCommunityScreen}
       />
     </CreatePostStack.Navigator>
   );
@@ -173,13 +213,6 @@ const MenuTab = () => {
 };
 
 export default function App() {
-  const [currentScreen, setcurrentScreen] = useState("");
-  // const previousScreen = useRef("");
-
-  // useEffect(() => {
-  //   previousScreen.current = currentScreen;
-  // }, [currentScreen]);
-
   return (
     <NavigationContainer>
       <AppStack.Navigator

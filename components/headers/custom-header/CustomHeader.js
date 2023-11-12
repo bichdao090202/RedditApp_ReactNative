@@ -10,7 +10,15 @@ export default function CustomHeader(props) {
   return (
     <View style={styles.containner}>
       <View style={styles.view1}>
-        <TouchableOpacity onPress={() => navigation.navigate("MenuScreen")}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("MenuStackScreen", {
+              screen: "MenuScreen",
+              params: { user: user },
+            });
+            // console.log(user);
+          }}
+        >
           <Ionicons name="menu" size={30} color="black" />
         </TouchableOpacity>
         <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 10 }}>

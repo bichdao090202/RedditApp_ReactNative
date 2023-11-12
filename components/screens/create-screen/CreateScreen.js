@@ -16,14 +16,18 @@ import * as ImagePicker from "expo-image-picker";
 import * as Progress from "react-native-progress";
 import { firebase } from "./firebaseConfig";
 import { Video } from "expo-av";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation, useRoute } from "@react-navigation/native";
+import axios from "axios";
 
 const windowWidth = Dimensions.get("window").width;
 
 export default function CreateScreen() {
-  const [community, setCommunity] = useState({
-    img: require("../../../assets/avatar.png"),
-    name: "Minecraft",
-  });
+  const route = useRoute();
+  const navigation = useNavigation();
+
+  const [user, setUser] = useState(route.params?.user);
+  const [community, setCommunity] = useState({});
 
   const [uploadProgress, setUploadProgress] = useState(0);
   const [postType, setPostType] = useState("text");
@@ -31,13 +35,233 @@ export default function CreateScreen() {
   const [selectedVideo, setSelectedVideo] = useState(null);
   // const video = useRef(null);
   const [status, setStatus] = useState({});
+  const [bodyText, setBodyText] = useState("");
+  const [title, setTitle] = useState("");
 
-  const count = useRef(0);
+  const [imageUrl, setImageUrl] = useState("");
+  // const [videoUrl, setVideoUrl] = useState("");
 
+  // set community
   useEffect(() => {
-    count.current = count.current + 1;
-    console.log(count.current);
-  });
+    if (route.params?.community) {
+      setCommunity(route.params?.community);
+      console.log(route.params?.community);
+    }
+  }, [route.params?.community]);
+
+  const resetScreen = () => {
+    console.log(user);
+    setPostType("text");
+    setImage(null);
+    setSelectedVideo(null);
+    setImage(null);
+    setBodyText("");
+    setTitle("");
+  };
+
+  const uploadVideo = async () => {
+    try {
+      const response = await fetch(selectedVideo);
+      const blob = await response.blob();
+
+      const storageRef = firebase
+        .storage()
+        .ref()
+        .child("videos/" + new Date().getTime());
+      const uploadTask = storageRef.put(blob);
+
+      // Tạo một Promise để theo dõi sự kiện state_changed
+      const uploadPromise = new Promise((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadProgress(progress);
+          },
+          (error) => {
+            reject(error);
+          },
+          () => {
+            resolve(uploadTask.snapshot.ref.getDownloadURL());
+          }
+        );
+      });
+
+      // Sử dụng await để đợi cho Promise hoàn thành
+      const downloadURL = await uploadPromise;
+      console.log("File available at", downloadURL);
+      return downloadURL;
+    } catch (error) {
+      console.error("Error uploading video:", error);
+      throw error; // Re-throw lỗi để nó có thể được xử lý bởi hàm gọi
+    }
+  };
+
+  const SaveImagePost = async () => {
+    try {
+      // Gọi uploadImage và đợi cho nó hoàn thành trước khi tiếp tục
+      const imageUrl = await uploadImage();
+
+      // Sau khi có imageUrl, tiếp tục với việc gửi POST request
+      const response = await axios.post(
+        ServerUrl + "/api/posts/create/image-post",
+        {
+          userId: user.id,
+          communityId: community.id,
+          imageUrl: imageUrl,
+          title: title,
+        }
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error saving image post:", error);
+    }
+  };
+
+  const SaveVideoPost = async () => {
+    try {
+      // Gọi uploadVideo và đợi cho nó hoàn thành trước khi tiếp tục
+      const videoUrl = await uploadVideo();
+
+      // Sau khi có videoUrl, tiếp tục với việc gửi POST request
+      const response = await axios.post(
+        ServerUrl + "/api/posts/create/video-post",
+        {
+          userId: user.id,
+          communityId: community.id,
+          videoUrl: videoUrl,
+          title: title,
+        }
+      );
+
+      console.log(response.data);
+    } catch (error) {
+      console.error("Error saving video post:", error);
+    }
+  };
+
+  const uploadImage = async () => {
+    try {
+      const response = await fetch(image);
+      const blob = await response.blob();
+
+      const storageRef = firebase
+        .storage()
+        .ref()
+        .child("images/" + new Date().getTime());
+      const uploadTask = storageRef.put(blob);
+
+      // Tạo một Promise để theo dõi sự kiện state_changed
+      const uploadPromise = new Promise((resolve, reject) => {
+        uploadTask.on(
+          "state_changed",
+          (snapshot) => {
+            const progress =
+              (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            setUploadProgress(progress);
+          },
+          (error) => {
+            reject(error);
+          },
+          () => {
+            resolve(uploadTask.snapshot.ref.getDownloadURL());
+          }
+        );
+      });
+
+      // Sử dụng await để đợi cho Promise hoàn thành
+      const downloadURL = await uploadPromise;
+      console.log("File available at", downloadURL);
+      return downloadURL;
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      throw error; // Re-throw lỗi để nó có thể được xử lý bởi hàm gọi
+    }
+  };
+
+  function CreateScreenHeader(callback) {
+    return (
+      <View
+        style={{
+          height: 70,
+          marginTop: 20,
+          flexDirection: "row",
+          alignItems: "center",
+          padding: 10,
+        }}
+      >
+        <View
+          style={{
+            flex: 1,
+            flexDirection: "row",
+          }}
+        >
+          <TouchableOpacity
+            onPress={() => {
+              callback();
+              navigation.navigate("Home");
+            }}
+          >
+            <Ionicons name="arrow-back" size={24} color="black" />
+          </TouchableOpacity>
+          <Text style={{ fontSize: 20, fontWeight: "bold", marginLeft: 10 }}>
+            Create Post
+          </Text>
+        </View>
+        <View
+          style={{
+            flex: 1,
+            justifyContent: "flex-end",
+            flexDirection: "row",
+          }}
+        >
+          <TouchableOpacity
+            style={{ backgroundColor: "#5cdb5c", borderRadius: 15, padding: 5 }}
+            onPress={() => {
+              if (postType == "text") {
+                console.log("text");
+                console.log(community.id);
+                console.log(user.id);
+                axios
+                  .post(ServerUrl + "/api/posts/create/text-post", {
+                    userId: user.id,
+                    communityId: community.id,
+                    content: bodyText,
+                    title: title,
+                  })
+                  .then((response) => {
+                    console.log(response.data);
+                  })
+                  .catch((error) => {
+                    console.log(error);
+                  });
+              }
+              if (postType == "image") {
+                // console.log("image");
+                SaveImagePost();
+              }
+              if (postType == "video") {
+                console.log("video");
+                SaveVideoPost();
+              }
+              // resetScreen();
+            }}
+          >
+            <Text style={{ fontSize: 20 }}>Post</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    );
+  }
+
+  // const count = useRef(0);
+
+  // useEffect(() => {
+  //   count.current = count.current + 1;
+  //   console.log(count.current);
+  // });
 
   const pickVideo = async () => {
     setPostType("video");
@@ -63,37 +287,6 @@ export default function CreateScreen() {
     if (!result.canceled) {
       setImage(result.assets[0].uri);
     }
-  };
-
-  const uploadImage = async () => {
-    const response = await fetch(image);
-    const blob = await response.blob();
-
-    const storageRef = firebase
-      .storage()
-      .ref()
-      .child("images/" + new Date().getTime());
-    const uploadTask = storageRef.put(blob);
-
-    uploadTask.on(
-      "state_changed",
-      (snapshot) => {
-        // Handle progress, like showing a progress bar.
-        const progress =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-        setUploadProgress(progress);
-      },
-      (error) => {
-        // Handle any errors.
-        console.error(error);
-      },
-      () => {
-        // Handle successful upload. Get the download URL.
-        uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-          console.log("File available at", downloadURL);
-        });
-      }
-    );
   };
 
   // useEffect(() => {
@@ -150,9 +343,6 @@ export default function CreateScreen() {
         <Video
           // ref={video}
           style={{ flex: 1, alignSelf: "stretch", width: 350, height: 450 }}
-          // source={{
-          //   uri: "http://d23dyxeqlo5psv.cloudfront.net/big_buck_bunny.mp4",
-          // }}
           source={{ uri: selectedVideo }}
           useNativeControls
           resizeMode="contain"
@@ -163,7 +353,7 @@ export default function CreateScreen() {
     );
   };
 
-  const TextView = () => {
+  const TextView = (callback) => {
     return (
       <TextInput
         style={{
@@ -171,14 +361,15 @@ export default function CreateScreen() {
           marginTop: 10,
         }}
         placeholder="body text"
+        onChangeText={(text) => callback(text)}
         multiline={true}
       />
     );
   };
 
-  const PostTypeInput = () => {
+  const PostTypeInput = (callback) => {
     if (postType === "text") {
-      return <TextView />;
+      return TextView(callback);
     } else if (postType === "image") {
       return <ImageView />;
     } else {
@@ -188,6 +379,7 @@ export default function CreateScreen() {
 
   return (
     <View style={{ flex: 1 }}>
+      {CreateScreenHeader(resetScreen)}
       <ScrollView
         style={{
           backgroundColor: "white",
@@ -215,7 +407,7 @@ export default function CreateScreen() {
                   }}
                 >
                   <Image
-                    source={community.img}
+                    source={{ uri: community.imageUrl }}
                     style={{ width: 30, height: 30, borderRadius: 15 }}
                   />
                   <Text style={{ fontSize: 15 }}>r/{community.name}</Text>
@@ -229,7 +421,14 @@ export default function CreateScreen() {
                   alignItems: "center",
                 }}
               >
-                <TouchableOpacity>
+                <TouchableOpacity
+                  onPress={() => {
+                    navigation.navigate("ChooseCommunityScreen", {
+                      user: user,
+                    });
+                    // console.log(user);
+                  }}
+                >
                   <Feather name="search" size={24} color="black" />
                 </TouchableOpacity>
               </View>
@@ -245,6 +444,7 @@ export default function CreateScreen() {
                 marginTop: 5,
               }}
               placeholder="Title"
+              onChangeText={(text) => setTitle(text)}
               multiline={true}
             />
             <View
@@ -275,7 +475,7 @@ export default function CreateScreen() {
           <View
             style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
           >
-            <PostTypeInput />
+            {PostTypeInput(setBodyText)}
           </View>
         </View>
       </ScrollView>

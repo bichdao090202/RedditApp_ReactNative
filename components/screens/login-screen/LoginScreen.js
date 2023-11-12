@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { View, Text, TextInput, Button, Image, StyleSheet } from "react-native";
 import axios from "axios";
+import ServerUrl from "../../../ServerUrl";
 
 const LoginScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -11,7 +12,7 @@ const LoginScreen = ({ navigation }) => {
   const handleLogin = () => {
     // Thực hiện xử lý đăng nhập ở đây (gọi API, kiểm tra đăng nhập, vv.)
     axios
-      .post("https://bffe-113-161-56-129.ngrok-free.app/api/users", {
+      .post(ServerUrl + "/api/users", {
         email,
         password,
       }) // Replace with your Spring Boot API endpoint
@@ -21,8 +22,25 @@ const LoginScreen = ({ navigation }) => {
         navigation.navigate("MenuTab", {
           screen: "Communities",
           params: {
+            screen: "CommunityScreen",
+            params: {
+              user: response.data,
+            },
             user: response.data,
           },
+          user: response.data,
+        });
+
+        navigation.navigate("MenuTab", {
+          screen: "Create",
+          params: {
+            screen: "CreateScreen",
+            params: {
+              user: response.data,
+            },
+            // user: response.data,
+          },
+          // user: response.data,
         });
 
         navigation.navigate("MenuTab", {

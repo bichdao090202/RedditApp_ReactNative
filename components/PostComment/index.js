@@ -10,6 +10,8 @@ import {
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
+import { useRoute } from "@react-navigation/native";
+import { ScrollView } from "react-native";
 
 const post = {
   title: "Despite my efforts, traffic to my site continues to decline",
@@ -69,10 +71,16 @@ const comment1 = [
   },
 ];
 
-export default function PostComment() {
+export default function PostComment(props) {
+  const route = useRoute();
+
   const [comment, setComment] = useState(comment1);
 
   const [userComment, setUserComment] = useState("");
+
+  const [user, setUser] = useState(route.params?.user);
+
+  const [post5, setPost5] = useState(props.post);
 
   const BreakSpace = () => {
     return (
@@ -82,164 +90,120 @@ export default function PostComment() {
     );
   };
 
-  const CommentView = ({ listComment }) => {
+  const CommentItem = ({ item }) => {
     return (
-      <View style={{ flex: 1 }}>
-        {/* {listComment.map((item) => (
+      <View>
+        <BreakSpace></BreakSpace>
+        <View style={styles.commentView}>
+          <View style={{ flexDirection: "row", alignItems: "center" }}>
+            <Image source={item.avatar} style={styles.avatar}></Image>
+            <Text style={{ fontWeight: "bold" }}>{item.user}</Text>
+            <Text>{item.time}</Text>
+          </View>
           <View>
-            <BreakSpace></BreakSpace>
-            <View style={styles.commentView}>
-              <View style={{ flexDirection: "row", alignItems: "center" }}>
-                <Image source={item.avatar} style={styles.avatar}></Image>
-                <Text style={{ fontWeight: "bold" }}>{item.user}</Text>
-                <Text>{item.time}</Text>
-              </View>
-              <View>
-                <Text>{item.content}</Text>
-              </View>
-              <View style={styles.commentButtonBar}>
-                <View style={styles.commentButton}>
-                  <TouchableOpacity>
-                    <Image
-                      style={styles.btnIcon}
-                      source={require("../../assets/moreicon.png")}
-                    ></Image>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.commentButton}>
-                  <TouchableOpacity style={styles.replyView}>
-                    <Image
-                      style={styles.btnIcon}
-                      source={require("../../assets/replyicon.png")}
-                    ></Image>
-                    <Text style={{ fontWeight: "500" }}>Reply</Text>
-                  </TouchableOpacity>
-                </View>
-                <View style={styles.commentButton}>
-                  <TouchableOpacity>
-                    <Image
-                      style={styles.btnIcon}
-                      source={require("../../assets/likeicon.png")}
-                    ></Image>
-                  </TouchableOpacity>
-                  <Text>{item.like}</Text>
-                  <TouchableOpacity>
-                    <Image
-                      style={styles.btnIcon}
-                      source={require("../../assets/dislikeicon.png")}
-                    ></Image>
-                  </TouchableOpacity>
-                </View>
-              </View>
+            <Text>{item.content}</Text>
+          </View>
+          <View style={styles.commentButtonBar}>
+            <View style={styles.commentButton}>
+              <TouchableOpacity>
+                <Image
+                  style={styles.btnIcon}
+                  source={require("../../assets/moreicon.png")}
+                ></Image>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.commentButton}>
+              <TouchableOpacity style={styles.replyView}>
+                <Image
+                  style={styles.btnIcon}
+                  source={require("../../assets/replyicon.png")}
+                ></Image>
+                <Text style={{ fontWeight: "500" }}>Reply</Text>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.commentButton}>
+              <TouchableOpacity>
+                <Image
+                  style={styles.btnIcon}
+                  source={require("../../assets/likeicon.png")}
+                ></Image>
+              </TouchableOpacity>
+              <Text>{item.like}</Text>
+              <TouchableOpacity>
+                <Image
+                  style={styles.btnIcon}
+                  source={require("../../assets/dislikeicon.png")}
+                ></Image>
+              </TouchableOpacity>
             </View>
           </View>
-        ))} */}
-        <FlatList
-          data={listComment}
-          renderItem={({ item }) => (
-            <View>
-              <BreakSpace></BreakSpace>
-              <View style={styles.commentView}>
-                <View style={{ flexDirection: "row", alignItems: "center" }}>
-                  <Image source={item.avatar} style={styles.avatar}></Image>
-                  <Text style={{ fontWeight: "bold" }}>{item.user}</Text>
-                  <Text>{item.time}</Text>
-                </View>
-                <View>
-                  <Text>{item.content}</Text>
-                </View>
-                <View style={styles.commentButtonBar}>
-                  <View style={styles.commentButton}>
-                    <TouchableOpacity>
-                      <Image
-                        style={styles.btnIcon}
-                        source={require("../../assets/moreicon.png")}
-                      ></Image>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.commentButton}>
-                    <TouchableOpacity style={styles.replyView}>
-                      <Image
-                        style={styles.btnIcon}
-                        source={require("../../assets/replyicon.png")}
-                      ></Image>
-                      <Text style={{ fontWeight: "500" }}>Reply</Text>
-                    </TouchableOpacity>
-                  </View>
-                  <View style={styles.commentButton}>
-                    <TouchableOpacity>
-                      <Image
-                        style={styles.btnIcon}
-                        source={require("../../assets/likeicon.png")}
-                      ></Image>
-                    </TouchableOpacity>
-                    <Text>{item.like}</Text>
-                    <TouchableOpacity>
-                      <Image
-                        style={styles.btnIcon}
-                        source={require("../../assets/dislikeicon.png")}
-                      ></Image>
-                    </TouchableOpacity>
-                  </View>
-                </View>
-              </View>
-            </View>
-          )}
-        />
+        </View>
+      </View>
+    );
+  };
+
+  const ListCommentView = ({ listComment }) => {
+    return (
+      <View style={{ flex: 1 }}>
+        {listComment.map((item) => (
+          <CommentItem item={item}></CommentItem>
+        ))}
       </View>
     );
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.postView}>
-        <View style={styles.postIntro}>
-          <Image source={post.avatar} style={styles.avatar}></Image>
-          <View style={{ flex: 1, flexDirection: "column", margin: 10 }}>
-            <Text style={{ fontWeight: "bold" }}>r/{post.community}</Text>
-            <Text>
-              u/{post.user} - {post.time}
-            </Text>
+      <ScrollView>
+        <View style={styles.postView}>
+          <View style={styles.postIntro}>
+            <Image source={post.avatar} style={styles.avatar}></Image>
+            <View style={{ flex: 1, flexDirection: "column", margin: 10 }}>
+              <Text style={{ fontWeight: "bold" }}>r/{post.community}</Text>
+              <Text>
+                u/{post.user} - {post.time}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.postContent}>
+            <Text style={styles.postTitle}>{post.title}</Text>
+            <Text style={styles.text}>{post.content}</Text>
+          </View>
+          <View style={styles.postButtonBar}>
+            <View style={styles.postButtonView}>
+              <TouchableOpacity>
+                <Image
+                  style={styles.btnIcon}
+                  source={require("../../assets/likeicon.png")}
+                ></Image>
+              </TouchableOpacity>
+              <Text>{post.like}</Text>
+              <TouchableOpacity>
+                <Image
+                  style={styles.btnIcon}
+                  source={require("../../assets/dislikeicon.png")}
+                ></Image>
+              </TouchableOpacity>
+            </View>
+            <View style={styles.postButtonView}>
+              <TouchableOpacity>
+                <Image
+                  style={styles.btnIcon}
+                  source={require("../../assets/commenticon.png")}
+                ></Image>
+              </TouchableOpacity>
+              <Text>{comment.length}</Text>
+            </View>
+            <View style={styles.postButtonView}>
+              <TouchableOpacity>
+                <Text>Share</Text>
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-        <View style={styles.postContent}>
-          <Text style={styles.postTitle}>{post.title}</Text>
-          <Text style={styles.text}>{post.content}</Text>
-        </View>
-        <View style={styles.postButtonBar}>
-          <View style={styles.postButtonView}>
-            <TouchableOpacity>
-              <Image
-                style={styles.btnIcon}
-                source={require("../../assets/likeicon.png")}
-              ></Image>
-            </TouchableOpacity>
-            <Text>{post.like}</Text>
-            <TouchableOpacity>
-              <Image
-                style={styles.btnIcon}
-                source={require("../../assets/dislikeicon.png")}
-              ></Image>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.postButtonView}>
-            <TouchableOpacity>
-              <Image
-                style={styles.btnIcon}
-                source={require("../../assets/commenticon.png")}
-              ></Image>
-            </TouchableOpacity>
-            <Text>{comment.length}</Text>
-          </View>
-          <View style={styles.postButtonView}>
-            <TouchableOpacity>
-              <Text>Share</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      </View>
 
-      <CommentView listComment={comment}></CommentView>
+        <ListCommentView listComment={comment}></ListCommentView>
+      </ScrollView>
 
       <BreakSpace></BreakSpace>
       <View style={styles.commentFrame}>

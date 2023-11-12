@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import axios from "axios";
+import ServerUrl from "../../../ServerUrl";
 
 const RegisterScreen = ({ navigation }) => {
   const [email, setEmail] = useState("");
@@ -20,28 +21,26 @@ const RegisterScreen = ({ navigation }) => {
   const handleRegister = async () => {
     try {
       const response = await axios
-        .post(" https://941e-113-161-56-129.ngrok-free.app/api/users/create", {
+        .post(ServerUrl + "/api/users/create", {
           email,
           username,
           password,
         })
         .then((response) => {
-          console.log(response.data, "response");
+          console.log(
+            response.data,
+            "Đăng ký thành công:",
+            response.data.message
+          );
+          navigation.navigate("Login");
         })
         .catch((error) => {
-          console.log(error);
+          console.log(
+            error,
+            "Đăng ký không thành công:",
+            response.data.message
+          );
         });
-      // Gửi dữ liệu đăng ký đến máy chủ bằng Axios
-
-      // Xử lý phản hồi từ máy chủ ở đây, ví dụ: kiểm tra kết quả và điều hướng đến màn hình khác
-      // if (response.data.success) {
-      //   // Đăng ký thành công, điều hướng đến màn hình khác
-      //   console.log("Đăng ký thành công:", response.data.message);
-      //   navigation.navigate("Login");
-      // } else {
-      //   // Đăng ký không thành công, xử lý lỗi hoặc hiển thị thông báo cho người dùng
-      //   console.log("Đăng ký không thành công:", response.data.message);
-      // }
     } catch (error) {
       // Xử lý lỗi nếu không thể kết nối với máy chủ
       console.error("Lỗi kết nối:", error);
