@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("api/communities")
@@ -26,9 +27,10 @@ public class CommunityController {
         return new ResponseEntity<List<Community>>(service.getAllCommunity(), HttpStatus.OK);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Community> getCommunityById(@RequestParam("id") ObjectId id) {
-        return new ResponseEntity<Community>(service.getCommunityById(id), HttpStatus.OK);
+    @PostMapping("/find")
+    public ResponseEntity<Optional<Community>> getCommunityById(@RequestBody Id id) {
+//        System.out.println(service.getCommunityById(id));
+        return ResponseEntity.ok(service.getCommunityById(id));
     }
 
     @PostMapping("/create")

@@ -29,6 +29,11 @@ public class PostController {
         return new ResponseEntity<>(service.getAllPostDto(), HttpStatus.OK);
     }
 
+    @PostMapping("/community")
+    private ResponseEntity<List<PostCommunityRequestDto>> getAllPostInCommunity(@RequestBody Id communityId) {
+        return ResponseEntity.ok(service.getAllPostInCommunity(communityId));
+    }
+
     @GetMapping("/id")
     public ResponseEntity<Optional<Post>> getPostById(@RequestParam("id")ObjectId id) {
         return new ResponseEntity<Optional<Post>>(service.getPostById(id), HttpStatus.OK);

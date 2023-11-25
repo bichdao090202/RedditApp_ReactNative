@@ -1,8 +1,11 @@
 package com.example.reddit_app.services;
 
+import com.example.reddit_app.dtos.Id;
+import com.example.reddit_app.dtos.PostCommunityRequestDto;
 import com.example.reddit_app.dtos.PostsRequestDto;
 import com.example.reddit_app.entities.Community;
 import com.example.reddit_app.entities.Post;
+import com.example.reddit_app.repositories.CommunityRepository;
 import com.example.reddit_app.repositories.PostRepository;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +25,9 @@ public class PostService {
     private PostRepository repository;
 
     @Autowired
+    private CommunityRepository communityRepository;
+
+    @Autowired
     private MongoTemplate mongoTemplate;
 
     public List<Post> getAllPost() {
@@ -34,6 +40,15 @@ public class PostService {
         Update update = new Update().push("postList", post);
         mongoTemplate.updateFirst(query, update, Community.class);
         return post;
+    }
+
+    public List<PostCommunityRequestDto> getAllPostInCommunity(Id communityId) {
+        List<PostCommunityRequestDto> list = new ArrayList<>();
+        List<Post> postList = communityRepository.findById(new ObjectId(communityId.getId())).get().getPostList();
+        for(Post post : postList) {
+            list.add(new PostCommunityRequestDto(post));
+        }
+        return  list;
     }
 
     public Optional<Post> getPostById(ObjectId id) {

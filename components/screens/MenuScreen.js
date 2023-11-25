@@ -19,8 +19,10 @@ export default function MenuScreen() {
   const [user, setUser] = useState(route.params?.user);
   const [communities, setcommunities] = useState([]);
 
-  const handlePress = () => {
+  const handlePress = ({ communityId, user }) => {
+    // const community = communities.find((item) => item.id === communityId);
     // Xử lý khi nút được nhấn
+    navigation.navigate("UserCommunityScreen", { communityId, user });
     console.log("Button pressed!");
   };
 
@@ -76,12 +78,12 @@ export default function MenuScreen() {
             Your community
           </Text>
         </View>
-        {communities.map((item, index) => {
+        {communities.map((item) => {
           return (
             <TouchableNativeFeedback
-              onPress={handlePress}
               background={TouchableNativeFeedback.Ripple("#bfbfbf", false)}
               key={item.id}
+              onPress={handlePress.bind(this, { communityId: item.id, user })}
             >
               <View style={styles.item}>
                 <Image source={{ uri: item.imageUrl }} style={styles.image} />

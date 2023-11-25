@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Text,
   View,
@@ -18,6 +18,13 @@ import ServerUrl from "../../ServerUrl";
 export default function Home({ navigation, route }) {
   const [user, setUser] = useState(route.params?.user);
   const [post, setPost] = useState({});
+
+  const count = useRef(0);
+
+  useEffect(() => {
+    count.current = count.current + 1;
+    console.log(count.current);
+  });
 
   useEffect(() => {
     axios.get(ServerUrl + "/api/posts").then((response) => {

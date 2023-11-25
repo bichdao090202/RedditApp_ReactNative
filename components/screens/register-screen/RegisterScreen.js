@@ -18,34 +18,54 @@ const RegisterScreen = ({ navigation }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleRegister = async () => {
-    try {
-      const response = await axios
-        .post(ServerUrl + "/api/users/create", {
-          email,
-          username,
-          password,
-        })
-        .then((response) => {
-          console.log(
-            response.data,
-            "Đăng ký thành công:",
-            response.data.message
-          );
-          navigation.navigate("Login");
-        })
-        .catch((error) => {
-          console.log(
-            error,
-            "Đăng ký không thành công:",
-            response.data.message
-          );
-        });
-    } catch (error) {
-      // Xử lý lỗi nếu không thể kết nối với máy chủ
-      console.error("Lỗi kết nối:", error);
-    }
+  const handleRegister = () => {
+    axios
+      .post(ServerUrl + "/api/users/create", {
+        email,
+        username,
+        password,
+      })
+      .then((response) => {
+        console.log(
+          response.data,
+          "Đăng ký thành công:",
+          response.data.message
+        );
+        navigation.navigate("Login");
+      })
+      .catch((error) => {
+        console.log(error, "Đăng ký không thành công:", response.data.message);
+      });
   };
+
+  // const handleRegister = async () => {
+  //   try {
+  //     const response = await axios
+  //       .post(ServerUrl + "/api/users/create", {
+  //         email,
+  //         username,
+  //         password,
+  //       })
+  //       .then((response) => {
+  //         console.log(
+  //           response.data,
+  //           "Đăng ký thành công:",
+  //           response.data.message
+  //         );
+  //         navigation.navigate("Login");
+  //       })
+  //       .catch((error) => {
+  //         console.log(
+  //           error,
+  //           "Đăng ký không thành công:",
+  //           response.data.message
+  //         );
+  //       });
+  //   } catch (error) {
+  //     // Xử lý lỗi nếu không thể kết nối với máy chủ
+  //     console.error("Lỗi kết nối:", error);
+  //   }
+  // };
 
   return (
     <View style={styles.container}>

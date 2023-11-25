@@ -2,6 +2,7 @@ package com.example.reddit_app.services;
 
 import com.example.reddit_app.dtos.CommunityResponseDto;
 import com.example.reddit_app.dtos.CreateCommunityRequestDto;
+import com.example.reddit_app.dtos.Id;
 import com.example.reddit_app.entities.Community;
 import com.example.reddit_app.entities.Post;
 import com.example.reddit_app.entities.User;
@@ -40,8 +41,10 @@ public class CommunityService {
         return repository.findAll();
     }
 
-    public Community getCommunityById(ObjectId id) {
-        return mongoTemplate.findById(id, Community.class);
+    public Optional<Community> getCommunityById(Id communityId) {
+//        Query query = new Query(Criteria.where("id").is((id)));
+//        System.out.println(mongoTemplate.findOne(query, Community.class));
+        return repository.findById(new ObjectId(communityId.getId()));
     }
 
     public String addMember(ObjectId communityId, User user) {

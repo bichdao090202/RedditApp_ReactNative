@@ -6,17 +6,15 @@ import {
   TouchableOpacity,
   Image,
   ScrollView,
+  Dimensions,
 } from "react-native";
-import { Dimensions } from "react-native";
-import { Feather } from "@expo/vector-icons";
 import { useState, useEffect, useRef } from "react";
-import { Entypo } from "@expo/vector-icons";
+import { Entypo, Feather, Ionicons } from "@expo/vector-icons";
 
 import * as ImagePicker from "expo-image-picker";
 import * as Progress from "react-native-progress";
 import { firebase } from "./firebaseConfig";
 import { Video } from "expo-av";
-import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
 
@@ -41,6 +39,13 @@ export default function CreateScreen() {
   const [imageUrl, setImageUrl] = useState("");
   // const [videoUrl, setVideoUrl] = useState("");
 
+  // const count = useRef(0);
+
+  // useEffect(() => {
+  //   count.current = count.current + 1;
+  //   console.log(count.current);
+  // });
+
   // set community
   useEffect(() => {
     if (route.params?.community) {
@@ -50,7 +55,6 @@ export default function CreateScreen() {
   }, [route.params?.community]);
 
   const resetScreen = () => {
-    console.log(user);
     setPostType("text");
     setImage(null);
     setSelectedVideo(null);
@@ -255,13 +259,6 @@ export default function CreateScreen() {
       </View>
     );
   }
-
-  // const count = useRef(0);
-
-  // useEffect(() => {
-  //   count.current = count.current + 1;
-  //   console.log(count.current);
-  // });
 
   const pickVideo = async () => {
     setPostType("video");

@@ -8,11 +8,16 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.web.bind.annotation.CrossOrigin;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.TreeSet;
 
 @SpringBootApplication
+//@CrossOrigin(origins = "http://localhost:8081")
 public class RedditAppApplication {
 
     public static void main(String[] args) {
@@ -21,16 +26,7 @@ public class RedditAppApplication {
 
     @Bean
     CommandLineRunner runner(UserService service, CommunityService communityService, PostService postService, UserService userService) {
-//        User user = new User("User 2", "VN","user@gmail.com", "123", new ArrayList<>());
-//        service.addUser(user);
-//        Community community = new Community("Minecraft", "info", "url", new ArrayList<Post>(), new ArrayList<User>());
-//        communityService.addCommunity(community);
-//        User user = new User("Pham Nhat", "abc", "nhat@gmail.com", "123", new ArrayList<Community>());
-//        Post post = new VideoPost("Video Post 1",
-//                LocalDateTime.now(), user, new ArrayList<>(), new Community(), "url"
-//        );
-//        userService.addUser(user);
-//        postService.createPost(post);
+//        System.out.println(communityService.getCommunityById("654e49b10f0bfa17ff780847"));
         return null;
     }
 }
