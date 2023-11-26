@@ -4,12 +4,15 @@ import { useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import axios from "axios";
 import ServerUrl from "../../../ServerUrl";
+import { useNavigation } from "@react-navigation/native";
 
 export default function CreateCommunityScreen() {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const route = useRoute();
   const [user, setUser] = useState(route.params?.user);
+
+  const navigation = useNavigation();
 
   const handleCreateCommunity = async () => {
     try {
@@ -26,7 +29,9 @@ export default function CreateCommunityScreen() {
             "Đăng ký thành công:",
             response.data.message
           );
-          //   navigation.navigate("Login");
+          navigation.navigate("MenuStackScreen", {
+            screen: "MenuScreen",
+          });
         })
         .catch((error) => {
           console.log(

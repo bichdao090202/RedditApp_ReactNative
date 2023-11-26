@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { styles } from "./style";
 import {
   View,
@@ -12,6 +12,7 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { ScrollView } from "react-native";
+import ServerUrl from "../../ServerUrl";
 
 const post = {
   title: "Despite my efforts, traffic to my site continues to decline",

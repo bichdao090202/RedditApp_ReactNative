@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -6,7 +6,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native";
 import { Video } from "expo-av";
 
-export default function PostView(props) {
+export default function PostCommunityView(props) {
   const navigation = useNavigation();
 
   const [postInfo, setpostInfo] = useState(props.item);
@@ -88,7 +88,7 @@ export default function PostView(props) {
   };
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
       <View
         style={{
           flex: 1,
@@ -99,14 +99,12 @@ export default function PostView(props) {
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity>
             <Image
-              source={{ uri: postInfo.communityImgUrl }}
+              source={{ uri: postInfo?.authorAvatarUrl }}
               style={styles.avatarUser}
             />
           </TouchableOpacity>
           <TouchableOpacity>
-            <Text style={{ fontWeight: "bold" }}>
-              r/{postInfo.communityName}
-            </Text>
+            <Text style={{ fontWeight: "bold" }}>r/{postInfo.authorName}</Text>
           </TouchableOpacity>
         </View>
 
@@ -177,7 +175,7 @@ export default function PostView(props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "white",
+    backgroundColor: "#fff",
     flex: 1,
   },
 
