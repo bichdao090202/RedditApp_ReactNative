@@ -102,7 +102,6 @@ export default function PostComment(props) {
       <View style={{ flex: 1 }}>
         {
           comments.map((item, index) => (
-            //this is where you render your list of items
             <CommentItem item={item} key={index}></CommentItem>
           ))
           // console.log(comments)
