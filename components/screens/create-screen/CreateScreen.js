@@ -17,6 +17,7 @@ import { firebase } from "./firebaseConfig";
 import { Video } from "expo-av";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
+import { Button } from "react-native";
 
 const windowWidth = Dimensions.get("window").width;
 
@@ -119,6 +120,17 @@ export default function CreateScreen() {
       );
 
       console.log(response.data);
+      navigation.navigate("Home", {
+        screen: "HomeStack",
+        params: {
+          reload: {
+            // userId: user.id,
+            // communityId: community.id,
+            // content: bodyText,
+            // title: title,
+          },
+        },
+      });
     } catch (error) {
       console.error("Error saving image post:", error);
     }
@@ -141,6 +153,17 @@ export default function CreateScreen() {
       );
 
       console.log(response.data);
+      navigation.navigate("Home", {
+        screen: "HomeStack",
+        params: {
+          reload: {
+            // userId: user.id,
+            // communityId: community.id,
+            // content: bodyText,
+            // title: title,
+          },
+        },
+      });
     } catch (error) {
       console.error("Error saving video post:", error);
     }
@@ -221,7 +244,8 @@ export default function CreateScreen() {
             flexDirection: "row",
           }}
         >
-          <TouchableOpacity
+          <Button
+            title="Post"
             style={{ backgroundColor: "#5cdb5c", borderRadius: 15, padding: 5 }}
             onPress={() => {
               if (postType == "text") {
@@ -237,6 +261,17 @@ export default function CreateScreen() {
                   })
                   .then((response) => {
                     console.log(response.data);
+                    navigation.navigate("Home", {
+                      screen: "HomeStack",
+                      params: {
+                        reload: {
+                          userId: user.id,
+                          communityId: community.id,
+                          content: bodyText,
+                          title: title,
+                        },
+                      },
+                    });
                   })
                   .catch((error) => {
                     console.log(error);
@@ -252,9 +287,7 @@ export default function CreateScreen() {
               }
               // resetScreen();
             }}
-          >
-            <Text style={{ fontSize: 20 }}>Post</Text>
-          </TouchableOpacity>
+          ></Button>
         </View>
       </View>
     );

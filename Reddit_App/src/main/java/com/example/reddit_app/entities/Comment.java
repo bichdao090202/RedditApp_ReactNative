@@ -1,5 +1,6 @@
 package com.example.reddit_app.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -13,7 +14,7 @@ import org.springframework.data.mongodb.core.mapping.DocumentReference;
 @NoArgsConstructor
 public class Comment {
     @DocumentReference(lazy = true)
+    @JsonIgnore
     private User user;
     private String content;
-    private long vote;
 }

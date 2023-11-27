@@ -5,12 +5,17 @@ import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native";
 import { Video } from "expo-av";
+import { useRoute } from "@react-navigation/native";
 
-export default function PostCommunityView(props) {
+export default function PostView(props) {
   const navigation = useNavigation();
+  const route = useRoute();
 
   const [postInfo, setpostInfo] = useState(props.item);
-
+  const [user, setUser] = useState(props.user);
+  useEffect(() => {
+    console.log(postInfo);
+  }, []);
   const BreakSpace = () => {
     return (
       <View
@@ -88,18 +93,18 @@ export default function PostCommunityView(props) {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#ffffff" }}>
+    <View style={{ flex: 1 }}>
       <View
         style={{
           flex: 1,
           padding: 10,
         }}
-        onPress={() => navigation.navigate("PostComment")}
+        // onPress={() => navigation.navigate("PostComment")}
       >
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity>
             <Image
-              source={{ uri: postInfo?.authorAvatarUrl }}
+              source={{ uri: postInfo.authorAvatarUrl }}
               style={styles.avatarUser}
             />
           </TouchableOpacity>
@@ -136,7 +141,14 @@ export default function PostCommunityView(props) {
 
             <TouchableOpacity
               style={styles.commentButton}
-              onPress={() => navigation.navigate("PostComment")}
+              onPress={() => {
+                navigation.navigate("PostComment", {
+                  user: user,
+                  postId: postInfo.post.id,
+                });
+                // console.log(user);
+                // console.log(postInfo.post.id);
+              }}
             >
               <Ionicons
                 name="chatbox-outline"
@@ -175,7 +187,7 @@ export default function PostCommunityView(props) {
 
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: "#fff",
+    backgroundColor: "white",
     flex: 1,
   },
 
