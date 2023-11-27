@@ -1,8 +1,6 @@
 package com.example.reddit_app.services;
 
-import com.example.reddit_app.dtos.CommunityResponseDto;
-import com.example.reddit_app.dtos.CreateCommunityRequestDto;
-import com.example.reddit_app.dtos.Id;
+import com.example.reddit_app.dtos.*;
 import com.example.reddit_app.entities.Community;
 import com.example.reddit_app.entities.Post;
 import com.example.reddit_app.entities.User;
@@ -37,9 +35,9 @@ public class CommunityService {
     @Autowired
     private MongoTemplate mongoTemplate;
 
-    public List<Community> getAllCommunity() {
-        return repository.findAll();
-    }
+//    public List<Community> getAllCommunity() {
+//        return repository.findAll();
+//    }
 
     public Optional<Community> getCommunityById(Id communityId) {
 //        Query query = new Query(Criteria.where("id").is((id)));
@@ -47,16 +45,28 @@ public class CommunityService {
         return repository.findById(new ObjectId(communityId.getId()));
     }
 
-    public String addMember(ObjectId communityId, User user) {
-        Query query = new Query(Criteria.where("id").is(communityId));
-        Update update = new Update().addToSet("memberList", user.getId());
+    public CheckUser addMember(AddUserDto dto) {
+        Query query = new Query(Criteria.where("id").is(dto.getCommunityId()));
+        Update update = new Update().addToSet("memberList", new ObjectId(dto.getUserId()));
         mongoTemplate.upsert(query, update, Community.class);
 
-        query = new Query(Criteria.where("id").is(user.getId()));
-        update = new Update().addToSet("joinedCommunity", communityId);
+        query = new Query(Criteria.where("id").is(dto.getUserId()));
+        update = new Update().addToSet("joinedCommunity", new ObjectId(dto.getCommunityId()));
         mongoTemplate.upsert(query, update, User.class);
 
-        return "added.";
+        return new CheckUser(true);
+    }
+
+    public CheckUser removeMember(AddUserDto dto) {
+        Query query = new Query(Criteria.where("id").is(dto.getCommunityId()));
+        Update update = new Update().pull("memberList", new ObjectId(dto.getUserId()));
+        mongoTemplate.upsert(query, update, Community.class);
+
+        query = new Query(Criteria.where("id").is(dto.getUserId()));
+        update = new Update().pull("joinedCommunity", new ObjectId(dto.getCommunityId()));
+        mongoTemplate.upsert(query, update, User.class);
+
+        return new CheckUser(false);
     }
 
     public Community addCommunity(CreateCommunityRequestDto dto) {
@@ -82,5 +92,24 @@ public class CommunityService {
             communityDtoList.add(dto);
         }
         return communityDtoList;
+    }
+
+    public List<CommunityResponseDto> getAllCommunity() {
+        List<CommunityResponseDto> communityDtoList = new ArrayList<>();
+        List<Community> communities = repository.findAll();
+        for(Community community : communities) {
+            CommunityResponseDto dto = new CommunityResponseDto(community.getId(), community.getName(), community.getImageUrl());
+            communityDtoList.add(dto);
+        }
+        return communityDtoList;
+    }
+
+    public CheckUser checkUserJoined(CheckUserRequest checkUserRequest) {
+        Community community = repository.findById((new ObjectId(checkUserRequest.getCommunityId()))).orElseThrow();
+        for (User u : community.getMemberList()) {
+            if(u.getId().equals(checkUserRequest.getUserId()))
+                return new CheckUser(true);
+        }
+        return new CheckUser(false);
     }
 }

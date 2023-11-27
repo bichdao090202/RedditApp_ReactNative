@@ -14,6 +14,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AddUserDto {
-    private ObjectId id;
-    private User user;
+    private String communityId;
+    private String userId;
 }

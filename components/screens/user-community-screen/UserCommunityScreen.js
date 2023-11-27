@@ -20,6 +20,20 @@ export default function UserCommunityScreen() {
   const [user, setUser] = useState(route.params?.user);
   const [post, setPost] = useState([]);
 
+  const [isUserJoined, setIsUserJoined] = useState({});
+
+  useEffect(() => {
+    axios
+      .post(ServerUrl + "/api/communities/check-user-joined", {
+        userId: user.id,
+        communityId: communityId,
+      })
+      .then((response) => {
+        console.log(response.data);
+        setIsUserJoined(response.data);
+      });
+  }, []);
+
   useEffect(() => {
     axios
       .post(ServerUrl + "/api/communities/find", {
@@ -42,14 +56,21 @@ export default function UserCommunityScreen() {
       });
   }, []);
 
+  const onPressHandler = () => {};
+
+  const BreakSpace = () => {
+    return (
+      <View
+        style={{ backgroundColor: "#f1f3f5", height: 10, width: "100vw" }}
+      ></View>
+    );
+  };
   return (
-    <View styles={styles.container}>
-      <View style={{ marginTop: 50 }}>
-        <Text>Header</Text>
-      </View>
+    <View styles={{ backgroundColor: "#000" }}>
+      <View style={{ marginTop: 50 }}>{/* <Text>Header</Text> */}</View>
       <View style={{ width: "100%", marginBottom: 140 }}>
-        <ScrollView>
-          <View style={{ backgroundColor: "#fff", padding: 10 }}>
+        <ScrollView style={{ backgroundColor: "#fff" }}>
+          <View style={{ padding: 10 }}>
             <View style={{ height: 60, flexDirection: "row" }}>
               <View style={{ flex: 2 }}>
                 <Image
@@ -66,7 +87,32 @@ export default function UserCommunityScreen() {
                 </View>
               </View>
               <View style={{ flex: 3 }}>
-                <Button title="Join"></Button>
+                <Button
+                  title={isUserJoined?.checkUser ? "Joined" : "Join"}
+                  onPress={() => {
+                    if (isUserJoined?.checkUser) {
+                      axios
+                        .post(ServerUrl + "/api/communities/remove-member", {
+                          userId: user.id,
+                          communityId: communityId,
+                        })
+                        .then((response) => {
+                          console.log(response.data);
+                          setIsUserJoined(response.data);
+                        });
+                    } else {
+                      axios
+                        .post(ServerUrl + "/api/communities/add-member", {
+                          userId: user.id,
+                          communityId: communityId,
+                        })
+                        .then((response) => {
+                          console.log(response.data);
+                          setIsUserJoined(response.data);
+                        });
+                    }
+                  }}
+                ></Button>
               </View>
             </View>
             <View>
@@ -77,10 +123,12 @@ export default function UserCommunityScreen() {
             </TouchableOpacity>
           </View>
 
+          <BreakSpace />
+
           {
             // lấy post list trong community và truyền vào PostView
             post.map((item) => (
-              <PostCommunityView key={item.post.id} item={item} />
+              <PostCommunityView key={item.post.id} item={item} user={user} />
             ))
           }
         </ScrollView>
@@ -92,6 +140,6 @@ export default function UserCommunityScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "white",
+    backgroundColor: "blue",
   },
 });

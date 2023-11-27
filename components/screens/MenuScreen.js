@@ -12,18 +12,17 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import ServerUrl from "../../ServerUrl";
+import { RefreshControl } from "react-native";
 
 export default function MenuScreen() {
   const navigation = useNavigation();
   const route = useRoute();
   const [user, setUser] = useState(route.params?.user);
   const [communities, setcommunities] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
 
   const handlePress = ({ communityId, user }) => {
-    // const community = communities.find((item) => item.id === communityId);
-    // Xử lý khi nút được nhấn
     navigation.navigate("UserCommunityScreen", { communityId, user });
-    console.log("Button pressed!");
   };
 
   useEffect(() => {
@@ -50,7 +49,26 @@ export default function MenuScreen() {
   return (
     <View style={styles.container}>
       <View style={{ marginTop: 50 }}></View>
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              axios
+                .post(ServerUrl + "/api/communities/user", {
+                  id: user.id,
+                })
+                .then((response) => {
+                  setcommunities(response.data);
+                  // console.log(response.data);
+                })
+                .catch((error) => {
+                  console.log(error);
+                });
+            }}
+          />
+        }
+      >
         <View>
           <Button
             onPress={() => {

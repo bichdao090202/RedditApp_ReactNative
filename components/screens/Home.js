@@ -6,25 +6,22 @@ import {
   FlatList,
   Image,
   TouchableOpacity,
+  ScrollView,
 } from "react-native";
-import { Foundation } from "@expo/vector-icons";
-import { Ionicons } from "@expo/vector-icons";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
 import CustomHeader from "../headers/custom-header/CustomHeader";
 import PostView from "../PostView";
 import axios from "axios";
 import ServerUrl from "../../ServerUrl";
+import { RefreshControl } from "react-native";
 
 export default function Home({ navigation, route }) {
   const [user, setUser] = useState(route.params?.user);
   const [post, setPost] = useState({});
+  const [reload, setReload] = useState({});
+
+  const [refreshing, setRefreshing] = useState(false);
 
   const count = useRef(0);
-
-  useEffect(() => {
-    count.current = count.current + 1;
-    console.log(count.current);
-  });
 
   useEffect(() => {
     axios.get(ServerUrl + "/api/posts").then((response) => {
@@ -32,13 +29,6 @@ export default function Home({ navigation, route }) {
       setPost(response.data);
     });
   }, []);
-
-  useEffect(() => {
-    if (route.params?.user) {
-      // console.log(route.params?.user);
-      setUser(route.params?.user);
-    }
-  }, [route.params?.user]);
 
   const BreakSpace = () => {
     return (
@@ -48,14 +38,29 @@ export default function Home({ navigation, route }) {
     );
   };
 
+  forceRender = () => {
+    this.forceUpdate();
+  };
+
   return (
     <View style={styles.container}>
       <CustomHeader title="Home" user={user} />
       <FlatList
         keyExtractor={(item, index) => index.toString()}
         data={post}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={() => {
+              axios.get(ServerUrl + "/api/posts").then((response) => {
+                // console.log(response.data);
+                setPost(response.data);
+              });
+            }}
+          />
+        }
         renderItem={({ item }) => {
-          return <PostView item={item} />;
+          return <PostView item={item} user={user} />;
         }}
       />
     </View>
