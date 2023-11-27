@@ -26,7 +26,7 @@ export default function ChatScreenHeader(props) {
         />
         <TouchableOpacity onPress={() => navigation.navigate("ProfileScrenn")}>
           <Image
-            source={require("../../assets/favicon.png")}
+            source={require("../../assets/avatar.png")}
             style={styles.avatarUser}
           />
         </TouchableOpacity>

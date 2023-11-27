@@ -32,7 +32,6 @@ export default function MyProfile() {
     };
 
     const TabPost = ({ listPost }) => {
-        console.log(listPost);
         return (
             <View style={styles.viewTabPost}>
                 <FlatList
@@ -95,7 +94,6 @@ export default function MyProfile() {
     }
 
     const TabComment = ({ comments }) => {
-        console.log(comments)
         return (
             <View style={styles.viewTabComments}>
                 <FlatList

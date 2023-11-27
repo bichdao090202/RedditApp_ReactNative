@@ -1,2 +1,2 @@
 
-export default ServerUrl = "https://adbc-113-161-56-129.ngrok-free.app";
+export default ServerUrl = "https://c11d-58-186-46-124.ngrok-free.app";
