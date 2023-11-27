@@ -1,1 +1,1 @@
-export default ServerUrl = "https://bb96-58-186-46-124.ngrok-free.app";
+export default ServerUrl = "https://3c2a-58-186-46-124.ngrok-free.app";

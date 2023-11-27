@@ -8,7 +8,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import ProfileScreen from "./components/MyProfile";
 import MenuScreen from "./components/screens/MenuScreen";
-import ChatScreen from "./components/screens/ChatScreen";
+import ChatScreen from "./components/ChatScreen";
 import InboxScreen from "./components/screens/InboxScreen";
 import PostComment from "./components/PostComment";
 import CustomHeader from "./components/headers/custom-header/CustomHeader";
