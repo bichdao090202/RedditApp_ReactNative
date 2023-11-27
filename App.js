@@ -37,6 +37,7 @@ const MenuStack = createNativeStackNavigator();
 const HoneStackScreen = () => {
   const route = useRoute();
   const [user, setUser] = useState(route.params?.user);
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     if (route.params?.user) {

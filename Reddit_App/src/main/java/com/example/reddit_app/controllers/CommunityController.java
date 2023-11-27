@@ -1,9 +1,6 @@
 package com.example.reddit_app.controllers;
 
-import com.example.reddit_app.dtos.AddUserDto;
-import com.example.reddit_app.dtos.CommunityResponseDto;
-import com.example.reddit_app.dtos.CreateCommunityRequestDto;
-import com.example.reddit_app.dtos.Id;
+import com.example.reddit_app.dtos.*;
 import com.example.reddit_app.entities.Community;
 import com.example.reddit_app.services.CommunityService;
 import org.bson.types.ObjectId;
@@ -22,10 +19,10 @@ public class CommunityController {
     @Autowired
     private CommunityService service;
 
-    @GetMapping
-    public ResponseEntity<List<Community>> allCommunity() {
-        return new ResponseEntity<List<Community>>(service.getAllCommunity(), HttpStatus.OK);
-    }
+//    @GetMapping
+//    public ResponseEntity<List<CommunityResponseDto>> allCommunity() {
+//        return ResponseEntity.ok(service.getAllCommunity());
+//    }
 
     @PostMapping("/find")
     public ResponseEntity<Optional<Community>> getCommunityById(@RequestBody Id id) {
@@ -39,15 +36,29 @@ public class CommunityController {
     }
 
     @PostMapping("/add-member")
-    public ResponseEntity<String> addMember(@RequestBody AddUserDto data) {
-        System.out.println(data.getId());
-        System.out.println(data.getUser());
-        return new ResponseEntity<String>(service.addMember(data.getId(), data.getUser()), HttpStatus.OK);
+    public ResponseEntity<CheckUser> addMember(@RequestBody AddUserDto dto) {
+        return ResponseEntity.ok(service.addMember(dto));
+    }
+
+    @PostMapping("/remove-member")
+    public ResponseEntity<CheckUser> removeMember(@RequestBody AddUserDto dto) {
+        return ResponseEntity.ok(service.removeMember(dto));
     }
 
     @PostMapping("/user")
     public ResponseEntity<List<CommunityResponseDto>> getUserCommunities(@RequestBody Id userId) {
 //        System.out.println(userId.getId());
         return new ResponseEntity<>(service.getUserCommunites(userId.getId()), HttpStatus.OK);
+    }
+
+    @PostMapping("/all")
+    public ResponseEntity<List<CommunityResponseDto>> getAllCommunitiyDto() {
+//        System.out.println(userId.getId());
+        return ResponseEntity.ok(service.getAllCommunity());
+    }
+
+    @PostMapping("/check-user-joined")
+    public ResponseEntity<CheckUser> checkUserJoined(@RequestBody CheckUserRequest checkUserRequest) {
+        return ResponseEntity.ok(service.checkUserJoined(checkUserRequest));
     }
 }

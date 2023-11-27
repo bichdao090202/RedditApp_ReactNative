@@ -1,15 +1,25 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { View, Text, TouchableOpacity, Image, StyleSheet } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { ScrollView } from "react-native";
 import { Video } from "expo-av";
+import { useRoute } from "@react-navigation/native";
 
 export default function PostView(props) {
   const navigation = useNavigation();
+  const route = useRoute();
 
   const [postInfo, setpostInfo] = useState(props.item);
+  const [user, setUser] = useState(props.user);
+
+  useEffect(() => {
+    if (props?.item) {
+      // console.log(route.params?.user);
+      setpostInfo(props?.item);
+    }
+  }, [props?.item]);
 
   const BreakSpace = () => {
     return (
@@ -94,7 +104,7 @@ export default function PostView(props) {
           flex: 1,
           padding: 10,
         }}
-        onPress={() => navigation.navigate("PostComment")}
+        // onPress={() => navigation.navigate("PostComment")}
       >
         <View style={{ flexDirection: "row" }}>
           <TouchableOpacity>
@@ -138,7 +148,14 @@ export default function PostView(props) {
 
             <TouchableOpacity
               style={styles.commentButton}
-              onPress={() => navigation.navigate("PostComment")}
+              onPress={() => {
+                navigation.navigate("PostComment", {
+                  user: user,
+                  postId: postInfo.post.id,
+                });
+                // console.log(user);
+                // console.log(postInfo.post.id);
+              }}
             >
               <Ionicons
                 name="chatbox-outline"
