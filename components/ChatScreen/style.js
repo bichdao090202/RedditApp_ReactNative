@@ -7,8 +7,9 @@ export const styles = StyleSheet.create({
     },
     viewChat:{
         flexDirection:'row',
-        height:50,
-
+        height:60,
+        paddingBottom:10,
+        paddingTop:10,
     },
     viewAvatar:{
         width:'15%',
@@ -18,6 +19,7 @@ export const styles = StyleSheet.create({
     viewChatMiddle:{
         width:'70%',
         justifyContent:'center',
+        
     },
     textUsername:{
         fontWeight:'bold',

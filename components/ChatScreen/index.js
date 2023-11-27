@@ -1,67 +1,39 @@
 import { Image, Text, TouchableOpacity, View } from "react-native";
 import { styles } from "./style";
+import { useEffect, useState } from "react";
 
-export default function PostComment(navigation) {
-    const listChat = [
-        {
-            userId: 1,
-            userName: "Nguyen Van A",
-            time: "Nov 25",
-            lastMess: "Hello",
-            avatar: require("../../assets/avatar1.png"),
-        },
-        {
-            userId: 2,
-            userName: "em4399",
-            time: "Sep 23",
-            lastMess: "See you",
-            avatar: require("../../assets/avatar2.png"),
-        },
-        {
-            userId: 3,
-            userName: "Creem Eden",
-            time: "May 3",
-            lastMess: "Just yesterday",
-            avatar: require("../../assets/avatar3.png"),
-        },
-    ]
+var load = 0;
+export default function PostComment({navigation}) {
+    var [listChat,setListChat] = useState([]);
+    useEffect(() => {
+        getChats();
+    }, [load])
 
-    const listChatDetail = [
-        {
-            userId: 1,
-            mess: [
-                {
-                    yourMess: "Hi",
-                    time: "10:00",
-                },
-                {
-                    myMess: "Hello",
-                    time: "10:01",
-                }
-            ]
-        },
-        {
-            userId: 2,
-            mess: [
-                {
-                    yourMess: "Hello",
-                    time: "10:00",
-                },
-                {
-                    myMess: "Hi",
-                    time: "10:01",
-                }
-            ]
-        },
+    const getChats = () => {
+        fetch('https://656433bbceac41c0761d9823.mockapi.io/chats')
+          .then((response) => response.json())
+          .then((json) => {
+            if (load === 0) {
+                setListChat(json);
+              }
+              load = 1;              
+          });
+    }
 
-    ]
     const ChatComponent = ({ listChat }) => {
         return (
             <View style={{ flex: 1 }}>
                 {listChat.map((item) => (
-                    <TouchableOpacity style={styles.viewChat} onPress={navigation.InboxStack}>
+                    <TouchableOpacity style={styles.viewChat} onPress={()=>{
+                          navigation.navigate("Inbox", {
+                            screen: "InboxStack",
+                            params: {
+                                iid: item.id,
+                              },
+                          });
+                    }}>
                         <View style={styles.viewAvatar}>
-                            <Image source={item.avatar} style={styles.imgUserAvatar}></Image>
+                            <Image source={require("../../assets/avatar2.png")} style={styles.imgUserAvatar}></Image>
                         </View>
                         <View style={styles.viewChatMiddle}>
                             <Text style={styles.textUsername}>{item.userName}</Text>
@@ -75,15 +47,6 @@ export default function PostComment(navigation) {
             </View>
         );
     };
-
-    const ChatDetail = () => {
-        return(
-            <View>
-                <Text>ChatDetail</Text>
-            </View>
-        
-        )
-    }
 
     return (
         <View style={styles.container}>

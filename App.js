@@ -10,6 +10,7 @@ import ProfileScreen from "./components/MyProfile";
 import MenuScreen from "./components/screens/MenuScreen";
 import ChatScreen from "./components/ChatScreen";
 import InboxScreen from "./components/screens/InboxScreen";
+import ChatDetail from "./components/ChatDetail";
 import PostComment from "./components/PostComment";
 import CustomHeader from "./components/headers/custom-header/CustomHeader";
 import CreateCommunityScreen from "./components/screens/create-community-screen/CreateCommunityScreen";
