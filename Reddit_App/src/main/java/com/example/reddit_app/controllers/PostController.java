@@ -30,14 +30,14 @@ public class PostController {
     }
 
     @PostMapping("/community")
-    private ResponseEntity<List<PostCommunityRequestDto>> getAllPostInCommunity(@RequestBody Id communityId) {
+    private ResponseEntity<List<PostCommentResponse>> getAllPostInCommunity(@RequestBody Id communityId) {
         return ResponseEntity.ok(service.getAllPostInCommunity(communityId));
     }
 
-    @GetMapping("/id")
-    public ResponseEntity<Optional<Post>> getPostById(@RequestParam("id")ObjectId id) {
-        return new ResponseEntity<Optional<Post>>(service.getPostById(id), HttpStatus.OK);
-    }
+//    @GetMapping("/id")
+//    public ResponseEntity<Optional<Post>> getPostById(@RequestParam("id")ObjectId id) {
+//        return new ResponseEntity<Optional<Post>>(service.getPostById(id), HttpStatus.OK);
+//    }
 
     @PostMapping("/create/text-post")
     public ResponseEntity<Post> createPost(@RequestBody TextPostRequestDto dto) {
@@ -82,10 +82,26 @@ public class PostController {
         return new ResponseEntity<Post>(service.createPost(videoPost), HttpStatus.OK);
     }
 
-//    @PostMapping("/create/comment")
-//    public ResponseEntity<Comment> createComment(@RequestBody CreateCommentDto dto) {
-//        return new ResponseEntity<Comment>(service.createComment(
-//                dto.getText(), dto.getPostId(), dto.getUserId())
-//                , HttpStatus.OK);
-//    }
+        @PostMapping("/comments")
+    public List<CommentResponse> getPostCommentList(@RequestBody Id postID) {
+        List<CommentResponse> commentResponses = new ArrayList<>();
+        List<Comment> commentList = service.getPostById(postID).get().getComments();
+        for (Comment comment : commentList) {
+            CommentResponse commentResponse = new CommentResponse();
+            commentResponse.setText(comment.getContent());
+            commentResponse.setUserId(comment.getUser().getId());
+            commentResponses.add(commentResponse);
+        }
+        return commentResponses;
+    }
+
+        @PostMapping("/comments/add")
+    public ResponseEntity<Comment> addComment(@RequestBody CommentResquest commentResquest) {
+            return ResponseEntity.ok(service.createComment(commentResquest));
+        }
+
+        @PostMapping("/post-comments")
+    public ResponseEntity<PostCommentResponse> getPostComments(@RequestBody Id id) {
+            return ResponseEntity.ok(service.getPostCommentResponse(id.getId()));
+        }
 }

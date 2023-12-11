@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { styles } from "./style";
 import {
   View,
   Text,
@@ -7,89 +6,40 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  StyleSheet,
 } from "react-native";
 
 import { Ionicons } from "@expo/vector-icons";
 import { useRoute } from "@react-navigation/native";
 import { ScrollView } from "react-native";
+import axios from "axios";
+import { Video } from "expo-av";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import ServerUrl from "../../ServerUrl";
-
-const post = {
-  title: "Despite my efforts, traffic to my site continues to decline",
-  community: "SEO",
-  user: "dirtydominion",
-  avatar: require("../../assets/avatar.png"),
-  time: "3h",
-  like: 113,
-  content:
-    "Hello, There you go, I created a tech blog almost 2 years ago now (easy-tutorials.com) , I made a lot of effort at the SEO and technical level to make it as good as possible but unfortunately without much results because the traffic is not taking off especially with all its Google updates.",
-};
-const comment1 = [
-  {
-    level: 1,
-    user: "SEO-pro-2001",
-    like: 16,
-    time: "3 day",
-    avatar: require("../../assets/avatar2.png"),
-    content:
-      "Lok at the competition that is ranking well and emulate their SEO tactics. Also, I noticed and read your article on Optimizing Your Website for Higher Search Engine Rankings",
-  },
-  {
-    level: 2,
-    user: "dirtydominion",
-    like: 1,
-    time: "2 day",
-    avatar: require("../../assets/avatar3.png"),
-    content:
-      "Thank you for your advice and regarding the errors in the article that you mentioned, are these errors of idea or spelling mistakes?",
-  },
-  {
-    level: 1,
-    user: "vinberdon",
-    like: 10,
-    time: "1 day",
-    avatar: require("../../assets/avatar4.png"),
-    content:
-      "Lok at the competition that is ranking well and emulate their SEO tactics. \nAlso, I noticed and read your article on Optimizing Your Website for Higher Search Engine Rankings and saw many errors, so I'd suggest researching better before writing as readers will notice when things are not factual and stop coming.",
-  },
-  {
-    level: 1,
-    user: "mayredmoon",
-    like: 5,
-    time: "18 h",
-    avatar: require("../../assets/avatar5.png"),
-    content:
-      "Your article is bad, sorry. You use too many tech jargon that newbie won’t understand. Your target audience is beginner, not expert \nUse simple english word. Seperate block of text to few sentence. Use more heading. Use more related image. Use PAS writing formula",
-  },
-  {
-    level: 1,
-    user: "Phronesis2000",
-    like: -1,
-    time: "3day",
-    avatar: require("../../assets/avatar6.png"),
-    content:
-      "You should really start to invest in SEO - none of these are SEO. \nYou need to build up your authority. Matt Cutts on Google - watch all of these first",
-  },
-];
 
 export default function PostComment(props) {
   const route = useRoute();
 
-  const [comment, setComment] = useState(comment1);
-
+  const [user, setUser] = useState(route.params?.user);
+  const [postId, setPostId] = useState(route.params?.postId);
+  const [post, setPost] = useState({});
+  const [comments, setComments] = useState([]);
   const [userComment, setUserComment] = useState("");
 
-  const [user, setUser] = useState(route.params?.user);
-
-  const [post5, setPost5] = useState(props.post);
-
-  const BreakSpace = () => {
-    return (
-      <View
-        style={{ backgroundColor: "#f1f3f5", height: 10, width: "100vw" }}
-      ></View>
-    );
-  };
+  useEffect(() => {
+    axios
+      .post(ServerUrl + "/api/posts/post-comments", {
+        id: postId,
+      })
+      .then((response) => {
+        setPost(response.data);
+        setComments(response.data.comments);
+        // console.log(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }, [route.params?.postId]);
 
   const CommentItem = ({ item }) => {
     return (
@@ -97,12 +47,16 @@ export default function PostComment(props) {
         <BreakSpace></BreakSpace>
         <View style={styles.commentView}>
           <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Image source={item.avatar} style={styles.avatar}></Image>
-            <Text style={{ fontWeight: "bold" }}>{item.user}</Text>
-            <Text>{item.time}</Text>
+            <Image
+              source={{ uri: item.userAvatarUrl }}
+              style={styles.avatarUser}
+            ></Image>
+            <Text style={{ fontWeight: "bold" }}>{item.userName}</Text>
+            {/* {item.time} */}
+            <Text>123</Text>
           </View>
           <View>
-            <Text>{item.content}</Text>
+            <Text>{item.text}</Text>
           </View>
           <View style={styles.commentButtonBar}>
             <View style={styles.commentButton}>
@@ -129,7 +83,7 @@ export default function PostComment(props) {
                   source={require("../../assets/likeicon.png")}
                 ></Image>
               </TouchableOpacity>
-              <Text>{item.like}</Text>
+              <Text>0</Text>
               <TouchableOpacity>
                 <Image
                   style={styles.btnIcon}
@@ -146,66 +100,174 @@ export default function PostComment(props) {
   const ListCommentView = ({ listComment }) => {
     return (
       <View style={{ flex: 1 }}>
-        {listComment.map((item) => (
-          <CommentItem item={item}></CommentItem>
-        ))}
+        {
+          comments.map((item, index) => (
+            <CommentItem item={item} key={index}></CommentItem>
+          ))
+          // console.log(comments)
+        }
       </View>
     );
+  };
+
+  const BreakSpace = () => {
+    return (
+      <View
+        style={{ backgroundColor: "#f1f3f5", height: 10, width: "100vw" }}
+      ></View>
+    );
+  };
+
+  const PostType = () => {
+    if (post?.post?.content != null) {
+      return (
+        <View>
+          <Text>{post?.post?.content}</Text>
+        </View>
+      );
+    }
+    if (post?.post?.imgUrl != null) {
+      return (
+        <View style={{ flex: 1 }}>
+          <View
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Image
+              source={{ uri: post?.post?.imgUrl }}
+              style={{
+                width: "100%",
+                height: undefined,
+                aspectRatio: 1,
+                resizeMode: "contain",
+                borderRadius: 10,
+                padding: 5,
+              }}
+            />
+          </View>
+        </View>
+      );
+    } else
+      return (
+        <View style={{ flex: 1 }}>
+          <View
+            style={{
+              width: "100%",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Video
+              // ref={video}
+              style={{
+                width: "100%",
+                height: undefined,
+                aspectRatio: 1,
+                resizeMode: "contain",
+                borderRadius: 10,
+                padding: 5,
+                // maxHeight: 300,
+              }}
+              source={{
+                uri: post?.post?.videoUrl,
+              }}
+              useNativeControls
+              resizeMode="contain"
+              isLooping
+              // onPlaybackStatusUpdate={setStatus}
+            />
+          </View>
+        </View>
+      );
   };
 
   return (
     <View style={styles.container}>
       <ScrollView>
-        <View style={styles.postView}>
-          <View style={styles.postIntro}>
-            <Image source={post.avatar} style={styles.avatar}></Image>
-            <View style={{ flex: 1, flexDirection: "column", margin: 10 }}>
-              <Text style={{ fontWeight: "bold" }}>r/{post.community}</Text>
-              <Text>
-                u/{post.user} - {post.time}
-              </Text>
-            </View>
-          </View>
-          <View style={styles.postContent}>
-            <Text style={styles.postTitle}>{post.title}</Text>
-            <Text style={styles.text}>{post.content}</Text>
-          </View>
-          <View style={styles.postButtonBar}>
-            <View style={styles.postButtonView}>
-              <TouchableOpacity>
+        <View style={{ flexDirection: "row" }}>
+          <TouchableOpacity>
+            <Image
+              source={{ uri: post?.communityImgUrl }}
+              style={styles.avatarUser}
+            />
+          </TouchableOpacity>
+          <TouchableOpacity>
+            <Text style={{ fontWeight: "bold" }}>r/{post?.communityName}</Text>
+          </TouchableOpacity>
+        </View>
+
+        <View>
+          <Text style={styles.postTitle}>{post?.post?.title}</Text>
+        </View>
+
+        <View
+          style={{
+            width: "100%",
+            marginTop: 10,
+          }}
+        >
+          <PostType></PostType>
+        </View>
+
+        <View
+          style={{
+            flexDirection: "row",
+            marginTop: 10,
+            marginTop: 10,
+          }}
+        >
+          <View style={{ flex: 1, flexDirection: "row" }}>
+            <View style={styles.viewVote}>
+              <TouchableOpacity style={styles.upVoteButton}>
                 <Image
                   style={styles.btnIcon}
                   source={require("../../assets/likeicon.png")}
                 ></Image>
+                <Text style={{ paddingLeft: 5, fontWeight: "bold" }}>0</Text>
               </TouchableOpacity>
-              <Text>{post.like}</Text>
-              <TouchableOpacity>
+              <TouchableOpacity style={{ paddingLeft: 5, paddingRight: 5 }}>
                 <Image
                   style={styles.btnIcon}
                   source={require("../../assets/dislikeicon.png")}
                 ></Image>
               </TouchableOpacity>
             </View>
-            <View style={styles.postButtonView}>
-              <TouchableOpacity>
-                <Image
-                  style={styles.btnIcon}
-                  source={require("../../assets/commenticon.png")}
-                ></Image>
-              </TouchableOpacity>
-              <Text>{comment.length}</Text>
-            </View>
-            <View style={styles.postButtonView}>
-              <TouchableOpacity>
-                <Text>Share</Text>
-              </TouchableOpacity>
-            </View>
+
+            <TouchableOpacity style={styles.commentButton}>
+              <Ionicons
+                name="chatbox-outline"
+                size={20}
+                color="black"
+                style={{ marginLeft: 5, marginRight: 5 }}
+              />
+              <Text style={{ fontWeight: "bold" }}>
+                {comments.length} Comments
+              </Text>
+            </TouchableOpacity>
+          </View>
+
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              justifyContent: "flex-end",
+            }}
+          >
+            <TouchableOpacity style={styles.shareButton}>
+              <MaterialCommunityIcons
+                name="share"
+                size={20}
+                color="black"
+                style={{ marginLeft: 5, marginRight: 5 }}
+              />
+            </TouchableOpacity>
           </View>
         </View>
-
-        <ListCommentView listComment={comment}></ListCommentView>
+        <ListCommentView listComment={comments}></ListCommentView>
       </ScrollView>
-
       <BreakSpace></BreakSpace>
       <View style={styles.commentFrame}>
         <TextInput
@@ -215,26 +277,181 @@ export default function PostComment(props) {
         ></TextInput>
         <TouchableOpacity
           onPress={() => {
-            setComment([
-              ...comment,
+            setComments([
+              ...comments,
               {
-                level: 1,
-                user: "Phronesis2000",
-                like: -1,
-                time: "3day",
-                avatar: require("../../assets/avatar6.png"),
-                content: userComment,
+                text: userComment,
+                userId: user.id,
+                userAvatarUrl: user.avatarUrl,
+                userName: user.username,
               },
             ]);
+            axios
+              .post(ServerUrl + "/api/posts/comments/add", {
+                text: userComment,
+                userId: user.id,
+                postId: post?.post?.id,
+              })
+              .then((response) => {
+                console.log(response.data);
+              })
+              .catch((error) => {
+                console.log(error);
+              });
           }}
         >
-          {/* <Image
-            style={styles.posticon}
-            source={require("../../assets/posticon.png")}
-          ></Image> */}
           <Ionicons name="send-sharp" size={24} color="black" />
         </TouchableOpacity>
       </View>
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: "white",
+    flex: 1,
+    padding: 10,
+  },
+  postTitle: {
+    fontSize: 15,
+    fontWeight: "bold",
+    marginTop: 5,
+    marginBottom: 5,
+  },
+
+  avatarUser: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    marginRight: 10,
+  },
+
+  shareButton: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "grey",
+    borderRadius: 20,
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingLeft: 5,
+    paddingRight: 5,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingLeft: 5,
+    marginLeft: 10,
+  },
+
+  commentButton: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "grey",
+    borderRadius: 20,
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingLeft: 10,
+    paddingRight: 10,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingLeft: 5,
+    marginLeft: 10,
+  },
+
+  upVoteButton: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    paddingLeft: 5,
+  },
+
+  viewVote: {
+    flexDirection: "row",
+    borderWidth: 1,
+    borderColor: "#808080",
+    borderRadius: 20,
+    paddingTop: 3,
+    paddingBottom: 3,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  btnIcon: {
+    height: 20,
+    width: 20,
+    marginRight: 5,
+    marginLeft: 5,
+  },
+  commentView: {
+    flexDirection: "column",
+    padding: 10,
+  },
+  postIntro: {
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  postContent: {
+    marginBottom: 10,
+  },
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+  },
+  postTitle: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginBottom: 10,
+  },
+  text: {},
+  postButtonBar: {
+    flexDirection: "row",
+    justifyContent: "space-around",
+  },
+  btnIcon: {
+    height: 20,
+    width: 20,
+    marginRight: 5,
+    marginLeft: 5,
+  },
+  postButtonView: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "32%",
+  },
+  commentButtonBar: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+  },
+  commentButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    marginRight: 10,
+    marginLeft: 10,
+  },
+  replyView: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  commentFrame: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    bottom: 0,
+    zIndex: 1,
+  },
+  commentText: {
+    backgroundColor: "#f1f3f5",
+    height: 35,
+    width: "80%",
+    margin: 10,
+    borderRadius: 5,
+  },
+  posticon: {
+    height: 30,
+    width: 30,
+    borderRadius: 15,
+    backgroundColor: "#f1f3f5",
+  },
+});

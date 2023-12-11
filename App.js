@@ -8,8 +8,9 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import ProfileScreen from "./components/MyProfile";
 import MenuScreen from "./components/screens/MenuScreen";
-import ChatScreen from "./components/screens/ChatScreen";
+import ChatScreen from "./components/ChatScreen";
 import InboxScreen from "./components/screens/InboxScreen";
+import ChatDetail from "./components/ChatDetail";
 import PostComment from "./components/PostComment";
 import CustomHeader from "./components/headers/custom-header/CustomHeader";
 import CreateCommunityScreen from "./components/screens/create-community-screen/CreateCommunityScreen";
@@ -36,6 +37,7 @@ const MenuStack = createNativeStackNavigator();
 const HoneStackScreen = () => {
   const route = useRoute();
   const [user, setUser] = useState(route.params?.user);
+  const [reload, setReload] = useState(false);
 
   useEffect(() => {
     if (route.params?.user) {
